@@ -14,13 +14,19 @@ const env = process.env
 
 app.use(bodyParser.json());
 
-const allowedOrigins = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(",") : ['*'];
+const allowedOrigins = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(",") : [];
 app.use(cors({
   origin: allowedOrigins,
   methods: ['GET', 'POST'],
   credentials: true,
 }))
 
+/*
+app.use((req, res, next) => {
+  console.log('Origin:', req.headers.origin);
+  next();
+});
+*/
 
 function delay(s) { return new Promise(res => setTimeout(res, s * 1000)); }
 
