@@ -124,9 +124,7 @@ class App extends Component {
               }
             }
 
-
           }
-
 
           this.setState({
             conectado: true,
@@ -201,7 +199,6 @@ class App extends Component {
         </div>
       </>
     );
-
 
     switch (ruta) {
 
