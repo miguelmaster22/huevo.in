@@ -1,0 +1,25 @@
+services:
+  app:
+    build: .
+    container_name: huevo.in
+    restart: always
+    #ports:
+    #  - "3000:3001"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./server/.env:/app/server/.env
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.n8n.rule=Host(`huevo.konectta.app`)"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - "traefik.http.routers.n8n.tls.certresolver=myresolver"
+      - "traefik.http.services.n8n.loadbalancer.server.port=3001"
+
+networks:
+  web:
+    external: true
