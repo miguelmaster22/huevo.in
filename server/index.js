@@ -573,8 +573,6 @@ async function colectarPuntos(from, hand) {
 
 }
 
-
-
 async function binariV2(wallet) {
   wallet = (wallet).toLocaleLowerCase()
 
