@@ -15,10 +15,10 @@ services:
       - web
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.n8n.rule=Host(`test-huevo.huevo.info`)"
-      - "traefik.http.routers.n8n.entrypoints=websecure"
-      - "traefik.http.routers.n8n.tls.certresolver=myresolver"
-      - "traefik.http.services.n8n.loadbalancer.server.port=3001"
+      - "traefik.http.routers.huevo-in.rule=Host(`huevo-in.huevo.info`)"
+      - "traefik.http.routers.huevo-in.entrypoints=websecure"
+      - "traefik.http.routers.huevo-in.tls.certresolver=myresolver"
+      - "traefik.http.services.huevo-in.loadbalancer.server.port=3001"
 
 networks:
   web:
