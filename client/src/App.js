@@ -10,7 +10,6 @@ import cons from "./cons"
 import abiToken from "./abi/token.json";
 import abiBinarioProxyV4 from "./abi/BinarySystemV4.json"; //version 2 nueevo proxyed
 
-
 let addressToken = cons.TOKEN;
 let chainId = cons.chainId;
 
