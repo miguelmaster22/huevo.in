@@ -44,6 +44,8 @@ export default class CrowdFunding extends Component {
       value = 1;
     }
 
+    document.getElementById("inputUSDTResult").value = parseInt(value * 25);
+
     this.setState({
       valueUSDT: value,
       valueUSDTResult: parseInt(this.state.valueUSDT * 25),
@@ -52,6 +54,9 @@ export default class CrowdFunding extends Component {
 
   async handleChangeUSDTResult(event) {
     let value = event.target.value;
+
+    
+    document.getElementById("inputUSDT").value = parseInt(value / 25);
 
     this.setState({
       valueUSDTResult: value,
@@ -544,18 +549,20 @@ export default class CrowdFunding extends Component {
                   <br />
                   <b className="text-center">
                     <input
+                    id="inputUSDT"
                       type={"number"}
                       min="1"
-                      value={this.state.valueUSDT}
+                      defaultValue={this.state.valueUSDT}
                       step="1"
-                      onChange={this.handleChangeUSDT}
+                      onInput={this.handleChangeUSDT}
                     />
                     {" = "}
                     <input
+                    id="inputUSDTResult"
                       type={"number"}
-                      value={this.state.valueUSDTResult}
+                      defaultValue={this.state.valueUSDTResult}
                       step="25"
-                      onChange={this.handleChangeUSDTResult}
+                      onInput={this.handleChangeUSDTResult}
                     />
                   </b>
                   <br />

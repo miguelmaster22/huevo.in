@@ -1,6 +1,7 @@
 const express = require("express");
-const path = require('path');
+const app = express();
 let cors = require("cors");
+const path = require('path');
 const { Web3 } = require("web3");
 const Cryptr = require("cryptr");
 const bodyParser = require("body-parser");
@@ -10,6 +11,16 @@ const cron = require('node-cron');
 require("dotenv").config();
 
 const env = process.env
+
+app.use(bodyParser.json());
+
+const allowedOrigins = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(",") : ['*'];
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST'],
+  credentials: true,
+}))
+
 
 function delay(s) { return new Promise(res => setTimeout(res, s * 1000)); }
 
@@ -72,19 +83,8 @@ const Binario = new Schema({
 
 const binario = mongoose.model('binarios-v2', Binario);
 
-const app = express();
-//app.use(cors())
-app.use(async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, GET");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  next();
-
-});
 
 
-app.use(bodyParser.json());
 
 const port = env.PORT_SERVER || "3001";
 
