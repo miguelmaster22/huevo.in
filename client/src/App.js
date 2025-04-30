@@ -172,9 +172,6 @@ class App extends Component {
 
   }
 
-
-
-
   render() {
 
     var ruta = "";
