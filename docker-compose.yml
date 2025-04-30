@@ -23,8 +23,7 @@ services:
       # Configuración del middleware (redirigir a HTTPS)
       - "traefik.http.routers.${APP_NAME}.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-
-
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
 networks:
   web:
     external: true
