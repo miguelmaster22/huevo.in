@@ -1,6 +1,6 @@
 const env = process.env;
 
-let API = env.REACT_APP_URL_API ?? "http://localhost:3001"; // URL de la API
+let API = env.REACT_APP_URL_API ?? ""; // URL de la API
 
 API = API.endsWith("/") ? API : API + "/"; // asegurarse de que la URL termine con /
 API = API + "api/v2/"; // agregar la URL de la API al final
