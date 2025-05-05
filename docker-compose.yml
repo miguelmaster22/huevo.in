@@ -3,8 +3,6 @@ services:
     build: .
     container_name: ${APP_NAME}-app
     restart: always
-    #ports:
-    #  - "3000:3001"
     env_file:
       - .env
     environment:
@@ -22,8 +20,9 @@ services:
        # router para redirigir www
       - "traefik.http.routers.redirect.rule=Host(`www.${DOMAIN}`)"
       - "traefik.http.routers.redirect.entrypoints=websecure"
-      - "traefik.http.routers.redirect.middlewares=redirect-www"
       - "traefik.http.routers.redirect.tls.certresolver=myresolver"
+      - "traefik.http.routers.redirect.service=noop@internal"
+      - "traefik.http.routers.redirect.middlewares=redirect-www"
 
       # middleware de redirección
       - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https?://www\\.(.*)"
