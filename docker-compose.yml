@@ -13,24 +13,27 @@ services:
       - web
     labels:
       - "traefik.enable=true"
+
+      # Router principal (sin www)
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.entrypoints=websecure"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=myresolver"
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=3001"
-       # router para redirigir www
+      - "traefik.http.routers.${APP_NAME}.middlewares=redirect-to-https"
+
+      # Redirección de www a dominio base
       - "traefik.http.routers.redirect.rule=Host(`www.${DOMAIN}`)"
       - "traefik.http.routers.redirect.entrypoints=websecure"
       - "traefik.http.routers.redirect.tls.certresolver=myresolver"
-      - "traefik.http.routers.redirect.service=noop@internal"
       - "traefik.http.routers.redirect.middlewares=redirect-www"
+      - "traefik.http.routers.redirect.service=noop@internal"
 
-      # middleware de redirección
+      # Middleware que redirige www → sin www
       - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https?://www\\.(.*)"
       - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://$1"
       - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
-      
-      # Configuración del middleware (redirigir a HTTPS)
-      - "traefik.http.routers.${APP_NAME}.middlewares=redirect-to-https"
+
+      # Middleware de redirección a HTTPS (opcional si también usas http)
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
       
