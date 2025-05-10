@@ -35,6 +35,7 @@ const WalletVacia = "0x0000000000000000000000000000000000000000"
 const factorBlock = 1.7
 const factorFail = 30
 const abiContrato = require("./BinarySystemV4.json");
+const { use } = require("react");
 
 
 let allbinario = []
@@ -997,6 +998,12 @@ app.post(URL + "puntos/add", async (req, res) => {
       if ("puntos" in data) {
 
         let user = await binario.findOne({ wallet: (data.wallet).toLocaleLowerCase() }, { _id: false })
+
+        console.log(user)
+
+        if(!user.lExtra || !user.rExtra){
+          res.send(result)
+        }
 
         let newUser = {}
 

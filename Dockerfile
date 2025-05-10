@@ -7,7 +7,5 @@
     WORKDIR /app
     RUN npm install && npm run build
     
-    # Exponer puerto y lanzar servidor
-    EXPOSE 3001
     CMD ["npm", "start"]
     
