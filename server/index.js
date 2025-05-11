@@ -1,41 +1,35 @@
-const express = require("express");
-const app = express();
-let cors = require("cors");
 const path = require('path');
+const dotenv = require('dotenv');
+const fs = require('fs');
+
+dotenv.config({ path: path.join(process.cwd(), '../.env') });
+
+const localEnvPath = path.join(process.cwd(), '../.env.local');
+//console.log(process.cwd(), localEnvPath);
+if (fs.existsSync(localEnvPath)) {
+  console.log("Loading local environment variables from .env.local");
+  dotenv.config({ path: localEnvPath });
+
+}
+
+const express = require("express");
+const cors = require("cors")
 const { Web3 } = require("web3");
 const Cryptr = require("cryptr");
 const bodyParser = require("body-parser");
 const BigNumber = require("bignumber.js");
 const mongoose = require('mongoose');
 const cron = require('node-cron');
-require("dotenv").config();
 
 const env = process.env
 
-app.use(bodyParser.json());
-
-const allowedOrigins = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(",") : [];
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST'],
-  credentials: true,
-}))
-
-/*
-app.use((req, res, next) => {
-  console.log('Origin:', req.headers.origin);
-  next();
-});
-*/
-
 function delay(s) { return new Promise(res => setTimeout(res, s * 1000)); }
 
-const uriMongoDB = env.APP_URIMONGODB + "huevo-beta?retryWrites=true&w=majority"
+const uriMongoDB = env.APP_URIMONGODB + env.APP_NAME + "?authSource=admin&retryWrites=true&w=majority"
 const WalletVacia = "0x0000000000000000000000000000000000000000"
 const factorBlock = 1.7
 const factorFail = 30
 const abiContrato = require("./BinarySystemV4.json");
-const { use } = require("react");
 
 
 let allbinario = []
@@ -90,10 +84,18 @@ const Binario = new Schema({
 
 const binario = mongoose.model('binarios-v2', Binario);
 
+const app = express();
 
+const allowedOrigins = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(",") : [];
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}))
 
+app.use(express.json());
 
-const port = env.PORT_SERVER || "3001";
+const port = env.PORT || "5000";
 
 const addressContrato = env.REACT_APP_SMARTCONTRACT; //Nevo v4
 
@@ -101,10 +103,7 @@ const KEY_Secreto = env.REACT_APP_ENCR_STO || "AAAAAAAAAAAAAAAA"; // cifrado sec
 
 const TOKEN = env.REACT_APP_TOKEN_API || "1234567890"; // Id de conecion para identificar
 
-let base = "api";
-let version = "v2";
-
-const URL = `/${base}/${version}/`;
+const URL = "/api/v2/";
 
 const RED = env.APP_RED || "https://bsc-dataseed.binance.org/";
 
@@ -175,7 +174,7 @@ web3_3.eth.getBalance(WALLET_API).then(async (r) => {
 })
 
 async function nonce() {
-  var activo = await web3_3.eth.getTransactionCount(WALLET_API, "pending");
+  var activo = await web3_3.eth.getTransactionCount(WALLET_API, "pending").catch(console.log)
   console.log(new BigNumber(activo).toString(10));
 
   gasPrice = new BigNumber(await web3_3.eth.getGasPrice())
@@ -336,7 +335,8 @@ async function hacerTakeProfit(wallet) {
 
   let gas = await contrato.methods
     .corteBinarioDo(wallet, retBinario, pRango.toString(10), 0)
-    .estimateGas({ from: WALLET_API }); // gas: 1000000});
+    .estimateGas({ from: WALLET_API })
+    .catch((e) => { return 1000000 }) // gas: 1000000});
 
   await contrato.methods
     .corteBinarioDo(wallet, retBinario, pRango.toString(10), 0)
@@ -579,6 +579,8 @@ async function colectarPuntos(from, hand) {
   return result;
 
 }
+
+
 
 async function binariV2(wallet) {
   wallet = (wallet).toLocaleLowerCase()
@@ -988,47 +990,34 @@ app.post(URL + "puntos/add", async (req, res) => {
     result: false,
   };
 
-  if (typeof req.body.data === "string") {
-    let data = JSON.parse(decryptString(req.body.data, KEY_Secreto));
+  let { data } = req.body
 
-    console.log(data)
+  if (typeof data === "string") {
+    let { token, wallet, hand, puntos }  = JSON.parse(decryptString(data, KEY_Secreto));
 
-    if (data.token == TOKEN) {
+    if (token == TOKEN && wallet && puntos) {
 
-      if ("puntos" in data) {
+      wallet = wallet.toLocaleLowerCase()
 
-        let user = await consultarUsuario(wallet, true)
-        console.log(user)
+      let user = await consultarUsuario(wallet, true)
 
-        if(!user.lExtra || !user.rExtra){
-          res.send(result)
-        }
+      let newUser = {}
 
-        let newUser = {}
-
-        if (data.hand === 0) {
-          newUser = {
-            lExtra: new BigNumber(user.lExtra).plus(data.puntos).toString(10)
-          }
-
-        } else {
-          newUser = {
-            rExtra: new BigNumber(user.rExtra).plus(data.puntos).toString(10)
-          }
-        }
-
-        await binario.updateOne({ wallet: (data.wallet).toLocaleLowerCase() }, newUser)
-        console.log("puntos asignados: " + (data.wallet).toLocaleLowerCase() + " hand: " + data.hand + " -> " + data.puntos)
-
-        await consultarUsuario((data.wallet).toLocaleLowerCase(), true, true, true)
-
-        result.result = true
+      if (hand === "left") {
+        newUser.lExtra = new BigNumber(user.lExtra).plus(puntos).toString(10)
       } else {
-        result.msg = "not correct value"
-
+        newUser.rExtra = new BigNumber(user.rExtra).plus(puntos).toString(10)
       }
+
+      await binario.updateOne({ wallet }, newUser)
+      console.log("puntos asignados: " + wallet + " hand: " + hand + " -> " + puntos)
+
+      await consultarUsuario(wallet, true, true, true)
+
+      result.result = true
+
     } else {
-      result.msg = "not auth"
+      result.msg = "not auth or parameters"
     }
   } else {
     result.msg = "data not found"
@@ -1392,7 +1381,7 @@ async function crearUsuario(from) {
 
   if (investorNew.registered) {
 
-    let depositos = await contrato.methods.verListaDepositos(from).call();
+    let depositos = await contrato.methods.verListaDepositos(from).call().catch(console.log)
 
     for (let index = 0; index < depositos.length; index++) {
       let dep = new BigNumber(depositos[index].valor)
@@ -1452,9 +1441,9 @@ async function crearUsuario(from) {
     if (investorNew.registered) {
       newUser.registered = true
 
-      newUser.idBlock = parseInt(await contrato.methods.addressToId(from).call())
+      newUser.idBlock = parseInt(await contrato.methods.addressToId(from).call().catch(console.log()))
 
-      let consulta = await contrato.methods.upline(from).call();
+      let consulta = await contrato.methods.upline(from).call().catch(console.log)
       newUser.referer = (consulta._referer).toLowerCase();
     }
 
@@ -1570,14 +1559,14 @@ async function actualizarUsuario(from, data) {
     let invertido = new BigNumber(0)
     let leader = new BigNumber(0)
     let upTo = new BigNumber(0)
-    let porcentaje = await contrato.methods.porcent().call()
+    let porcentaje = await contrato.methods.porcent().call().catch(console.log)
 
 
     if (investorNew.registered) {
-      newUser.idBlock = parseInt(await contrato.methods.addressToId(from).call())
+      newUser.idBlock = parseInt(await contrato.methods.addressToId(from).call().catch(console.log))
       newUser.registered = true;
 
-      let consulta = await contrato.methods.upline(from).call()
+      let consulta = await contrato.methods.upline(from).call().catch(console.log)
 
       newUser.hand = parseInt(consulta._lado);
       if (newUser.hand <= 1 && userTemp.referer === WalletVacia) {
@@ -1586,7 +1575,7 @@ async function actualizarUsuario(from, data) {
 
       }
 
-      let depositos = await contrato.methods.verListaDepositos(from).call();
+      let depositos = await contrato.methods.verListaDepositos(from).call().catch(console.log)
 
       for (let index = 0; index < depositos.length; index++) {
         let dep = new BigNumber(depositos[index].valor)
@@ -1607,7 +1596,7 @@ async function actualizarUsuario(from, data) {
         realInvested = new BigNumber(investorNew.invested)
       }
 
-      newUser.retirableA = new BigNumber(await contrato.methods.retirableA(from).call()).toNumber()
+      newUser.retirableA = new BigNumber(await contrato.methods.retirableA(from).call().catch(console.log)).toNumber()
 
 
     } else {
@@ -1709,13 +1698,16 @@ app.get(URL + "total/retirar", async (req, res) => {
   res.send(result);
 });
 
-app.use(express.static(path.join(__dirname, '../client/docs')));
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/docs', 'index.html'));
+
+app.use(express.static(path.join(process.cwd(), '../client/docs')));
+
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: "Ruta no encontrada" });
 });
 
+
 app.listen(port, () => {
-  console.log(`WEB - Listening on: http://localhost:${port} `);
-  console.log(`API - Listening on: http://localhost:${port + URL} `);
+  console.log("WEB - Listening on: http://localhost:" + port);
+  console.log("API - Listening on: http://localhost:" + port + URL);
 
 });

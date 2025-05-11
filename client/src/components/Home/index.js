@@ -29,7 +29,6 @@ export default class Home extends Component {
 
     setTimeout(() => {
       this.Investor()
-
     }, 3 * 1000)
 
     intervalo2 = setInterval(() => {

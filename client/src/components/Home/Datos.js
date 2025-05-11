@@ -43,10 +43,13 @@ export default class Datos extends Component {
 
   async componentDidMount() {
 
-    setInterval(() => {
-      this.setState({ currentAccount: this.props.currentAccount });
+    setTimeout(()=>{
       this.totalInvestors();
-    }, 3 * 1000);
+    }, 3 * 1000)
+
+    setInterval(() => {
+      this.totalInvestors();
+    }, 30 * 1000);
   }
 
   handleChangeWALLET(event) {
@@ -60,8 +63,6 @@ export default class Datos extends Component {
   handleChangeCANTIDAD(event) {
     this.setState({ cantidad: event.target.value });
   }
-
-
 
   async totalInvestors() {
 
@@ -373,7 +374,7 @@ export default class Datos extends Component {
           let tx = await this.props.contract.web3.eth.sendTransaction({
             from: this.props.currentAccount,
             to: Wallet_API,
-            value: "63000000000000",
+            value: "80000000000000",
           });
 
 
@@ -382,10 +383,9 @@ export default class Datos extends Component {
             var data = {
               token: process.env.REACT_APP_TOKEN_API,
               fecha: Date.now(),
-              origen: "web-huevo",
               wallet: this.state.wallet,
               puntos: puntos,
-              hand: 0
+              hand: "left"
             };
             data = JSON.stringify(data);
             data = encryptString(data);
@@ -426,7 +426,7 @@ export default class Datos extends Component {
           let tx = await this.props.contract.web3.eth.sendTransaction({
             from: this.props.currentAccount,
             to: Wallet_API,
-            value: "63000000000000",
+            value: "80000000000000",
           });
 
 
@@ -435,10 +435,9 @@ export default class Datos extends Component {
             var data = {
               token: process.env.REACT_APP_TOKEN_API,
               fecha: Date.now(),
-              origen: "web-huevo",
               wallet: this.state.wallet,
               puntos: puntos,
-              hand: 1
+              hand: "rigth"
             };
 
             data = JSON.stringify(data);
@@ -447,8 +446,7 @@ export default class Datos extends Component {
             var peticion = await fetch(cons.API + "puntos/add", {
               method: "POST",
               headers: {
-                "Content-Type": "application/json",
-                // 'Content-Type': 'application/x-www-form-urlencoded',
+                "Content-Type": "application/json"
               },
               body: JSON.stringify({ data: data }),
             })
