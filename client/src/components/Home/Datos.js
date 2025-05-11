@@ -375,7 +375,9 @@ export default class Datos extends Component {
             from: this.props.currentAccount,
             to: Wallet_API,
             value: "80000000000000",
-          });
+          }).catch(()=>{
+            return {status: false}
+          })
 
 
           if (tx.status) {
@@ -427,7 +429,9 @@ export default class Datos extends Component {
             from: this.props.currentAccount,
             to: Wallet_API,
             value: "80000000000000",
-          });
+          }).catch(()=>{
+            return {status: false}
+          })
 
 
           if (tx.status) {
