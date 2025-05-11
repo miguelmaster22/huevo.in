@@ -5,7 +5,7 @@
     # Copiar e instalar frontend
     COPY . .
     WORKDIR /app
-    RUN npm install:all && npm run build
+    RUN npm run install:all && npm run build
     
     CMD ["npm", "start"]
     
