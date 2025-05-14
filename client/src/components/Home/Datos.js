@@ -68,39 +68,39 @@ export default class Datos extends Component {
 
     let esto = await this.props.contract.binaryProxy.methods
       .setstate()
-      .call({ from: this.state.currentAccount })
+      .call({ from: this.props.currentAccount })
 
     let retirado = parseInt(await this.props.contract.binaryProxy.methods
       .totalRefWitdrawl()
-      .call({ from: this.state.currentAccount }))
+      .call({ from: this.props.currentAccount }))
 
     let decimales = parseInt(await this.props.contract.contractToken.methods
       .decimals()
-      .call({ from: this.state.currentAccount }))
+      .call({ from: this.props.currentAccount }))
 
     let days = parseInt(await this.props.contract.binaryProxy.methods
       .dias()
-      .call({ from: this.state.currentAccount }))
+      .call({ from: this.props.currentAccount }))
 
     let porcentaje = parseInt(await this.props.contract.binaryProxy.methods
       .porcent()
-      .call({ from: this.state.currentAccount }))
+      .call({ from: this.props.currentAccount }))
 
     let precioRegistro = parseInt(await this.props.contract.binaryProxy.methods
       .precioRegistro()
-      .call({ from: this.state.currentAccount }))
+      .call({ from: this.props.currentAccount }))
 
     let timerOut = parseInt(await this.props.contract.binaryProxy.methods
       .timerOut()
-      .call({ from: this.state.currentAccount }))
+      .call({ from: this.props.currentAccount }))
 
     let MIN_RETIRO = parseInt(await this.props.contract.binaryProxy.methods
       .MIN_RETIRO()
-      .call({ from: this.state.currentAccount }))
+      .call({ from: this.props.currentAccount }))
 
     let MAX_RETIRO = parseInt(await this.props.contract.binaryProxy.methods
       .MAX_RETIRO()
-      .call({ from: this.state.currentAccount }))
+      .call({ from: this.props.currentAccount }))
 
     let consulta = await (await fetch(cons.API + "total/retirar")).json()
 
@@ -138,11 +138,11 @@ export default class Datos extends Component {
           className="btn btn-info d-block text-center mx-auto mt-1"
           onClick={async () => {
 
-            var sponsor = prompt("register  sponsor wallet", this.state.currentAccount);
+            var sponsor = prompt("register  sponsor wallet", this.props.currentAccount);
 
             var transaccion = await this.props.contract.binaryProxy.methods
               .asignFreeMembership(this.state.wallet, sponsor, 0)
-              .send({ from: this.state.currentAccount });
+              .send({ from: this.props.currentAccount });
 
 
             alert("transaction " + transaccion.transactionHash);
@@ -162,11 +162,11 @@ export default class Datos extends Component {
         className="btn btn-info d-block text-center mx-auto mt-1"
         onClick={async () => {
 
-          var sponsor = prompt("register  sponsor wallet", this.state.currentAccount);
+          var sponsor = prompt("register  sponsor wallet", this.props.currentAccount);
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .asignFreeMembership(this.state.wallet, sponsor, 1)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
           alert("transaction " + transaccion.transactionHash);
           setTimeout(
@@ -189,7 +189,7 @@ export default class Datos extends Component {
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .makeNewLevel(this.state.wallet, nivel)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
 
           alert("transaction " + transaccion.transactionHash);
@@ -211,7 +211,7 @@ export default class Datos extends Component {
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .makeRemoveLevel(this.state.wallet)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
 
           alert("transaction " + transaccion.transactionHash);
@@ -233,7 +233,7 @@ export default class Datos extends Component {
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .controlWitdrawl(true)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
 
           alert("transaction " + transaccion.transactionHash);
@@ -255,7 +255,7 @@ export default class Datos extends Component {
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .controlWitdrawl(false)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
 
           alert("transaction " + transaccion.transactionHash);
@@ -279,7 +279,7 @@ export default class Datos extends Component {
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .redimToken(token)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
 
           alert("transaction " + transaccion.transactionHash);
@@ -299,7 +299,7 @@ export default class Datos extends Component {
         className="btn btn-info d-block text-center mx-auto mt-1"
         onClick={async () => {
           let porcent = await this.props.contract.binaryProxy.methods
-            .porcent().call({ from: this.state.currentAccount });
+            .porcent().call({ from: this.props.currentAccount });
 
           porcent = new BigNumber(porcent).toString(10)
 
@@ -307,7 +307,7 @@ export default class Datos extends Component {
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .asignarPlan(this.state.wallet, parseInt(this.state.cantidad / 25), porcent, false)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
           alert("verifica la transaccion " + transaccion.transactionHash);
           setTimeout(
@@ -350,7 +350,7 @@ export default class Datos extends Component {
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .setPrecioRegistro(new BigNumber(this.state.cantidad).shiftedBy(18).toString(10), [100])
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
           alert("verifica la transaccion " + transaccion.transactionHash);
           setTimeout(
@@ -477,7 +477,7 @@ export default class Datos extends Component {
         onClick={async () => {
           var transaccion = await this.props.contract.binaryProxy.methods
             .setRetorno(this.state.plan)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
           alert("verifica la transaccion " + transaccion.transactionHash);
           setTimeout(
@@ -496,7 +496,7 @@ export default class Datos extends Component {
         onClick={async () => {
           var transaccion = await this.props.contract.binaryProxy.methods
             .setDias(this.state.plan)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
           alert("verifica la transaccion " + transaccion.transactionHash);
           setTimeout(
@@ -518,7 +518,7 @@ export default class Datos extends Component {
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .setTimerOut(this.state.plan)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
           alert("verifica la transaccion " + transaccion.transactionHash);
           setTimeout(
@@ -538,7 +538,7 @@ export default class Datos extends Component {
           var MIN_RETIRO = new BigNumber(prompt("Min retiro")).shiftedBy(18).toString(10)
           var transaccion = await this.props.contract.binaryProxy.methods
             .setMIN_RETIRO(MIN_RETIRO)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
           alert("verifica la transaccion " + transaccion.transactionHash);
           setTimeout(
@@ -558,7 +558,7 @@ export default class Datos extends Component {
           var MAX_RETIRO = new BigNumber(prompt("max retiro")).shiftedBy(18).toString(10)
           var transaccion = await this.props.contract.binaryProxy.methods
             .setMAX_RETIRO(MAX_RETIRO)
-            .send({ from: this.state.currentAccount });
+            .send({ from: this.props.currentAccount });
 
           alert("verifica la transaccion " + transaccion.transactionHash);
           setTimeout(
