@@ -433,7 +433,7 @@ export default class Home extends Component {
 
           />
 
-
+          {/** 
           <div className="container mt-5">
             <div className="row">
               <div className="col-md-12">
@@ -455,7 +455,7 @@ export default class Home extends Component {
               </div>
             </div>
           </div>
-
+*/}
         </div>
       </div>
     );
