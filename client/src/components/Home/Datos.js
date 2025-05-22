@@ -514,7 +514,7 @@ export default class Datos extends Component {
         className="btn btn-info d-block text-center mx-auto mt-1"
         onClick={async () => {
 
-          alert("time is in seconds")
+          alert("time is in seconds ej: 1")
 
           var transaccion = await this.props.contract.binaryProxy.methods
             .setTimerOut(this.state.plan)
@@ -591,11 +591,8 @@ export default class Datos extends Component {
       /*
 
       asignar meberships(0-1)
-
       asignar free plan (7)
-
       send tokens (8)
-
       asignar puntos (10-11)
       */
 
@@ -606,9 +603,7 @@ export default class Datos extends Component {
 
       /*
         free Membership 
-
         Asignar Free Plan (7)
-        
         send tokens (8)
 
       */
