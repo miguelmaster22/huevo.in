@@ -346,7 +346,7 @@ export default class Oficina extends Component {
 
     let investor = await this.props.contract.binaryProxy.methods.investors(this.state.currentAccount).call({ from: this.state.currentAccount });
 
-    if (available > this.state.MIN_RETIRO && true) {
+    if (available >= this.state.MIN_RETIRO ) {
       let data = {
         token: process.env.REACT_APP_TOKEN_API,
         fecha: Date.now(),
@@ -441,9 +441,6 @@ export default class Oficina extends Component {
 
       let puntosRango = [125, 250, 500, 1250, 2500, 5000, 12500, 25000, 50000, 150000, 500000, 1500000, 5000000]
       let usdtRango = [10, 20, 40, 100, 200, 400, 1000, 2000, 4000, 5000, 10000, 20000, 50000]
-
-
-
 
       //console.log(totalRango)
 
@@ -662,12 +659,8 @@ export default class Oficina extends Component {
           className="btn btn-primary btn-lg d-block text-center mx-auto mt-1"
           onClick={async () => {
 
-            if (takeProfit * 1 > this.state.MIN_RETIRO) {
+            if (takeProfit * 1 >= this.state.MIN_RETIRO) {
               await this.withdraw();
-            }
-
-            if (takeProfit * 1 > this.state.MIN_RETIRO) {
-              window.alert("take profit first");
 
             } else {
 
