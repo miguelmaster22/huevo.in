@@ -275,63 +275,12 @@ async function hacerTakeProfit(wallet) {
   retBinario = retBin
 
   let pRango = new BigNumber(0)
-  let invest = new BigNumber(user.invested).toNumber() // 125 USDT
-
-  let puntosRango = [
-    125 * 10 ** 18,
-    250 * 10 ** 18,
-    500 * 10 ** 18,
-    1250 * 10 ** 18,
-    2500 * 10 ** 18,
-    5000 * 10 ** 18,
-    12500 * 10 ** 18,
-    25000 * 10 ** 18,
-    50000 * 10 ** 18,
-    125000 * 10 ** 18,
-    250000 * 10 ** 18,
-    500000 * 10 ** 18,
-    1250000 * 10 ** 18
-  ]
-
-  let usdtRango = [
-    10 * 10 ** 18,
-    20 * 10 ** 18,
-    40 * 10 ** 18,
-    100 * 10 ** 18,
-    200 * 10 ** 18,
-    400 * 10 ** 18,
-    1000 * 10 ** 18,
-    2000 * 10 ** 18,
-    4000 * 10 ** 18,
-    5000 * 10 ** 18,
-    10000 * 10 ** 18,
-    20000 * 10 ** 18,
-    50000 * 10 ** 18
-  ]
-
-  let rangoArray = []
-
-  for (let index = 0; index < 12; index++) {
-    rangoArray[index] = await contrato.methods
-      .rangoReclamado("0xcBD6272721306Cbc2621B6919481bD0a7d5f0ce3", 0)
-      .call()
-      .then((r) => {
-        //console.log(index, r);
-        return r;
-      })
-      .catch((e) => {
-        console.log(e.toString());
-        return false;
-      });
-
-  }
 
   let truerango = true;
 
   if (truerango) {
     pRango = puntosUsados
   }
-
 
   let gas = await contrato.methods
     .corteBinarioDo(wallet, retBinario, pRango.toString(10), 0)
