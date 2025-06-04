@@ -246,7 +246,6 @@ async function hacerTakeProfit(wallet) {
 
   try {
     user = await binario.findOne({ wallet: (wallet).toLocaleLowerCase() }, { _id: false })
-
   } catch (error) {
     console.log(error.toString())
   }
@@ -267,7 +266,6 @@ async function hacerTakeProfit(wallet) {
   } else {
     newUser.lReclamados = new BigNumber(user.lReclamados).plus(puntosReclamados).toString(10)
     newUser.rReclamados = new BigNumber(user.rReclamados).plus(puntosReclamados).toString(10)
-
     puntosUsados = new BigNumber(newUser.lReclamados)
 
   }
@@ -275,9 +273,7 @@ async function hacerTakeProfit(wallet) {
   retBinario = retBin
 
   let pRango = new BigNumber(0)
-
   let truerango = true;
-
   if (truerango) {
     pRango = puntosUsados
   }
@@ -339,8 +335,7 @@ app.post(URL + "retiro", async (req, res) => {
     result.message = "reading data"
     if (
       data.token == TOKEN &&
-      data.fecha + 5 * 60 * 1000 >= Date.now() //&&
-      //data.origen === "web-huevo"
+      data.fecha + 5 * 60 * 1000 >= Date.now()
     ) {
       result.result = await hacerTakeProfit(data.wallet)
       result.message = "profit called"
@@ -357,7 +352,7 @@ async function estimateRetiro(wallet) {
     result: false,
   };
 
-  var retBinario = new BigNumber(0);
+  let retBinario = new BigNumber(0);
 
   let user = await consultarUsuario(wallet, true)
 

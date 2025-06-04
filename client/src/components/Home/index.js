@@ -219,11 +219,9 @@ export default class Home extends Component {
       listaDepositos = [];
 
 
-      var tiempo = await this.props.contract.binaryProxy.methods
+      let tiempo = await this.props.contract.binaryProxy.methods
         .tiempo()
         .call({ from: investor.wallet });
-
-        console.log(tiempo)
 
       tiempo = parseInt(tiempo) * 1000;
 

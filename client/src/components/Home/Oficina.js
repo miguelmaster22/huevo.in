@@ -346,17 +346,15 @@ export default class Oficina extends Component {
 
     let investor = await this.props.contract.binaryProxy.methods.investors(this.state.currentAccount).call({ from: this.state.currentAccount });
 
-    if (available >= this.state.MIN_RETIRO ) {
+    if (available >= this.state.MIN_RETIRO) {
       let data = {
         token: process.env.REACT_APP_TOKEN_API,
         fecha: Date.now(),
-        origen: "web-kapp3",
         wallet: this.props.currentAccount,
       };
       data = encryptString(JSON.stringify(data));
 
-      //console.log(data);
-      var peticion = await fetch(cons.API + "calculate/retiro", {
+      let peticion = await fetch(cons.API + "calculate/retiro", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -366,23 +364,26 @@ export default class Oficina extends Component {
       })
         .then((r) => r.json())
         .catch(() => {
-          return { result: false };
+          return { result: false, error: true, message: "Error in API request" };
         });
 
-      if (peticion.result && !peticion.error) {
-        console.log();
+      if (peticion.result && !peticion.error ) {
+
         let tx = await this.props.contract.web3.eth.sendTransaction({
           from: this.props.currentAccount,
-          to: "0x6b78C6d2031600dcFAd295359823889b2dbAfd1B",
+          to: process.env.REACT_APP_WALLET_API,
           value: peticion.gas.toString(10),
+        }).catch((e) => {
+          console.log(e);
+          return { status: false, message: e.toString() };
         });
 
         if (tx.status) {
-          if (Date.now() > (investor.paidAt * 1000) + (3600 * 1000) || parseInt(investor.paidAt) === 0) {
+          if (Date.now() > (parseInt(investor.paidAt) * 1000) + (3600 * 1000) || parseInt(investor.paidAt) === 0) {
+
             data = {
               token: process.env.REACT_APP_TOKEN_API,
               fecha: Date.now(),
-              origen: "web-kapp3",
               wallet: this.props.currentAccount,
             };
             data = encryptString(JSON.stringify(data));
@@ -397,7 +398,7 @@ export default class Oficina extends Component {
             })
               .then((r) => r.json())
               .catch(() => {
-                return { result: false };
+                return { result: false, message: "Error in API request" };
               });
 
             if (peticion.result) {
@@ -575,9 +576,9 @@ export default class Oficina extends Component {
   async openRed(wallet, hand) {
     wallet = wallet.toLowerCase();
 
-    var lado = await this.props.contract.binaryProxy.methods.misDirectos(wallet, hand).call({ from: this.state.currentAccount });
+    let lado = await this.props.contract.binaryProxy.methods.misDirectos(wallet, hand).call({ from: this.state.currentAccount });
 
-    console.log(lado);
+    //console.log(lado);
 
     let hijos = [];
 
